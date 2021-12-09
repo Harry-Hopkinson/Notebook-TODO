@@ -64,7 +64,14 @@ const useCodeMirror = <T extends Element>(
           bracketMatching(),
           defaultHighlightStyle.fallback,
           highlightActiveLine(),
-          javascript(),
+          markdown({
+            base: markdownLanguage,
+            codeLanguages: languages,
+            addKeymap: true
+          }),
+          oneDark,
+          transparentTheme,
+          syntaxHighlighting,
           EditorView.lineWrapping,
           EditorView.updateListener.of(update=>{
               if (update.changes) {
