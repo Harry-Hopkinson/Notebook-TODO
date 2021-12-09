@@ -8,13 +8,13 @@ interface Props {
 }
 
 const Editor: React.FC<Props> = (props) => {
-    const { onChange } = props
+    const { onChange, initialDoc } = props
     const handleChange = useCallback(
         state => onChange(state.doc.toString()),
         [onChange]
     )
     const [refContainer, editorView] = useCodeMirror<HTMLDivElement>({
-        initialDoc: "Hello, World!",
+        initialDoc: initialDoc,
         onChange: handleChange
       })
 
@@ -23,7 +23,7 @@ const Editor: React.FC<Props> = (props) => {
             // Do nothing for now
         }
     }, [editorView])
-    return <div className="editor-wrapper" ref={refContainer}>Editor</div>
+    return <div className="editor-wrapper" ref={refContainer}></div>
 }
 
 export default Editor;
