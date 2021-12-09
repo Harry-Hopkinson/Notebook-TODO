@@ -55,3 +55,5 @@ const useCodeMirror = <T extends Element>(
 
   return [refContainer, editorView]
 }
+
+export default useCodeMirror
