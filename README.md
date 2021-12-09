@@ -1,4 +1,4 @@
-# Markdown Editor Tutorial
+# A Notebook to Store Ideas and Code Snippets.
 
 ## Get started
 
