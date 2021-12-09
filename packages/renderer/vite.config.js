@@ -32,7 +32,7 @@ const config = {
     assetsDir: '.',
     rollupOptions: {
       external: [
-        ...builtinModules,
+        ...builtinModules.filter(m => m !== 'process' && m !== 'assert'),
       ],
     },
     emptyOutDir: true,
