@@ -12,7 +12,7 @@ const App: React.FC = () => {
     return (
         <div className="app">
             <Editor onChange={handleDocChange} initialDoc={doc}/>
-            <Preview />
+            <Preview doc={doc}/>
         </div>
     )
 }
