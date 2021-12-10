@@ -2,8 +2,9 @@
     background-color: transparent;
     display: flex;
     flex-direction: row;
-}
-
-button {
-    font-size: calc(10px + 2vim);
-}
+    height: 100%;
+  }
+  
+  button {
+    font-size: calc(10px + 2vmin);
+  }
