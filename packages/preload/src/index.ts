@@ -1,40 +1,45 @@
 import {contextBridge} from 'electron';
 
-import type {BinaryLike} from 'crypto';
-import {createHash} from 'crypto';
-
+const apiKey = 'electron';
 /**
- * The "Main World" is the JavaScript context that your main renderer code runs in.
- * By default, the page you load in your renderer executes code in this world.
- *
- * @see https://www.electronjs.org/docs/api/context-bridge
+ * @see https://github.com/electron/electron/issues/21437#issuecomment-573522360
  */
+const api: ElectronApi = {
+  versions: process.versions,
+};
 
-/**
- * After analyzing the `exposeInMainWorld` calls,
- * `packages/preload/exposedInMainWorld.d.ts` file will be generated.
- * It contains all interfaces.
- * `packages/preload/exposedInMainWorld.d.ts` file is required for TS is `renderer`
- *
- * @see https://github.com/cawa-93/dts-for-context-bridge
- */
+if (import.meta.env.MODE !== 'test') {
+  /**
+   * The "Main World" is the JavaScript context that your main renderer code runs in.
+   * By default, the page you load in your renderer executes code in this world.
+   *
+   * @see https://www.electronjs.org/docs/api/context-bridge
+   */
+  contextBridge.exposeInMainWorld(apiKey, api);
+} else {
 
-/**
- * Expose Environment versions.
- * @example
- * console.log( window.versions )
- */
-contextBridge.exposeInMainWorld('versions', process.versions);
+  /**
+   * Recursively Object.freeze() on objects and functions
+   * @see https://github.com/substack/deep-freeze
+   * @param obj Object on which to lock the attributes
+   */
+  const deepFreeze = (obj: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    if (typeof obj === 'object' && obj !== null) {
+      Object.keys(obj).forEach((prop) => {
+        const val = obj[prop];
+        if ((typeof val === 'object' || typeof val === 'function') && !Object.isFrozen(val)) {
+          deepFreeze(val);
+        }
+      });
+    }
 
-/**
- * Safe expose node.js API
- * @example
- * window.nodeCrypto('data')
- */
-contextBridge.exposeInMainWorld('nodeCrypto', {
-  sha256sum(data: BinaryLike) {
-    const hash = createHash('sha256');
-    hash.update(data);
-    return hash.digest('hex');
-  },
-});
+    return Object.freeze(obj);
+  };
+
+  deepFreeze(api);
+
+  window[apiKey] = api;
+
+  // Need for Spectron tests
+  window.electronRequire = require;
+}
